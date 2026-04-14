@@ -8,16 +8,13 @@
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2> Sistema de Registro y Distribucion de Documentos</h2>
-
-    <a href="#" onclick="mostrar('dashboard')"> Dashboard</a>
-    <a href="#" onclick="mostrar('registro')"> Registrar</a>
-    <a href="#" onclick="mostrar('lista')"> Lista</a>
+    <h2>📂 Sistema</h2>
+    <a href="#" onclick="mostrar('dashboard')">📊 Dashboard</a>
+    <a href="#" onclick="mostrar('registro')">📝 Registrar</a>
+    <a href="#" onclick="mostrar('lista')">📋 Lista</a>
 </div>
 
-<!-- CONTENIDO -->
 <div class="main">
 
 <!-- DASHBOARD -->
@@ -25,30 +22,11 @@
     <h1>Dashboard</h1>
 
     <div class="cards">
-        <div class="card">
-            <h3>Total</h3>
-            <p id="totalDocs">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Pendientes</h3>
-            <p id="pendientes">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Enviados</h3>
-            <p id="enviados">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Entregados</h3>
-            <p id="entregados">0</p>
-        </div>
-
-        <div class="card">
-            <h3>No Recepcionados</h3>
-            <p id="noRecibidos">0</p>
-        </div>
+        <div class="card"><h3>Total</h3><p id="totalDocs">0</p></div>
+        <div class="card"><h3>Pendientes</h3><p id="pendientes">0</p></div>
+        <div class="card"><h3>Enviados</h3><p id="enviados">0</p></div>
+        <div class="card"><h3>Entregados</h3><p id="entregados">0</p></div>
+        <div class="card"><h3>No recibidos</h3><p id="noRecibidos">0</p></div>
     </div>
 </div>
 
@@ -57,7 +35,6 @@
     <h1>Registrar Documento</h1>
 
     <form action="/Sistema_Registro/guardar.php" method="POST" id="formRegistro">
-
         <input type="text" name="codigo" placeholder="DOC001" required>
         <input type="text" name="tipo" placeholder="Tipo" required>
         <input type="date" name="fecha" required>
@@ -79,9 +56,12 @@
 <div id="lista" style="display:none;">
     <h1>Lista de Documentos</h1>
 
+    <form action="generar_guia.php" method="POST">
+
     <table>
         <thead>
             <tr>
+                <th>✔</th>
                 <th>Código</th>
                 <th>Tipo</th>
                 <th>Fecha</th>
@@ -92,28 +72,10 @@
         </thead>
         <tbody id="tabla"></tbody>
     </table>
-    </div>
-    <form action="generar_guia.php" method="POST">
-
-    <table>
-    <thead>
-    <tr>
-    <th>✔</th>
-    <th>Código</th>
-    <th>Tipo</th>
-    <th>Fecha</th>
-    <th>Remitente</th>
-    <th>Despacho</th>
-    <th>Estado</th>
-    </tr>
-    </thead>
-
-    <tbody id="tabla"></tbody>
-    </table>
 
     <button type="submit">🚚 Generar Guía</button>
-
     </form>
+</div>
 
 </div>
 

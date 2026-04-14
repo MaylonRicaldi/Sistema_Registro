@@ -1,4 +1,4 @@
-// CAMBIAR SECCIONES
+// CAMBIAR SECCIÓN
 function mostrar(seccion){
     document.getElementById("dashboard").style.display = "none";
     document.getElementById("registro").style.display = "none";
@@ -9,7 +9,6 @@ function mostrar(seccion){
 
 // VALIDACIÓN
 document.getElementById("formRegistro").addEventListener("submit", function(e){
-
     let codigo = document.querySelector("[name='codigo']").value.trim();
 
     if(!/^DOC[0-9]{3}$/.test(codigo)){
@@ -18,7 +17,7 @@ document.getElementById("formRegistro").addEventListener("submit", function(e){
     }
 });
 
-// CARGAR DATOS
+// LISTAR DATOS
 fetch("listar.php")
 .then(res => res.json())
 .then(data => {
@@ -40,6 +39,7 @@ fetch("listar.php")
 
         tabla.innerHTML += `
         <tr>
+            <td><input type="checkbox" name="documentos[]" value="${doc.id}"></td>
             <td>${doc.codigo}</td>
             <td>${doc.tipo}</td>
             <td>${doc.fecha_recepcion}</td>
@@ -66,7 +66,6 @@ fetch("listar.php")
 
 // CAMBIAR ESTADO
 function cambiarEstado(id, estado){
-
     fetch("actualizar_estado.php", {
         method: "POST",
         headers: {
@@ -76,15 +75,3 @@ function cambiarEstado(id, estado){
     })
     .then(() => location.reload());
 }
-
-tabla.innerHTML += `
-<tr>
-    <td><input type="checkbox" name="documentos[]" value="${doc.id}"></td>
-    <td>${doc.codigo}</td>
-    <td>${doc.tipo}</td>
-    <td>${doc.fecha_recepcion}</td>
-    <td>${doc.remitente}</td>
-    <td>${doc.despacho}</td>
-    <td>${doc.estado}</td>
-</tr>
-`;
