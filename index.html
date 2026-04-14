@@ -34,14 +34,39 @@
 <div id="registro" style="display:none;">
     <h1>Registrar Documento</h1>
 
-    <form action="/Sistema_Registro/guardar.php" method="POST" id="formRegistro">
-        <input type="text" name="codigo" placeholder="DOC001" required>
-        <input type="text" name="tipo" placeholder="Tipo" required>
-        <input type="date" name="fecha" required>
-        <input type="text" name="remitente" placeholder="Remitente" required>
+        <form action="guardar.php" method="POST" id="formRegistro">
+        <h2>Registrar Documento</h2>
 
+        <!-- CÓDIGO -->
+        <label>Código (Ingrese solo el número)</label>
+        <div style="display:flex; gap:5px;">
+            <input type="text" value="DOC" readonly style="width:70px;">
+            <input type="number" name="numero" placeholder="Ej: 1" min="1" max="999" required>
+        </div>
+
+        <!-- TIPO -->
+        <label>Tipo de Documento</label>
+        <select name="tipo" required>
+            <option value="">Seleccione...</option>
+            <option value="Oficio">Oficio</option>
+            <option value="Carta">Carta</option>
+            <option value="Memorando">Memorando</option>
+            <option value="Informe">Informe</option>
+        </select>
+
+        <!-- FECHA -->
+        <label>Fecha de Recepción</label>
+       <input type="date" name="fecha" required>
+        <label>Remitente (solo letras)</label>
+        <input type="text" name="remitente" placeholder="Ej: Juan Perez"
+            pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" 
+            title="Solo letras y espacios"
+            required>
+
+        <!-- DESPACHO -->
+        <label>Despacho</label>
         <select name="despacho" required>
-            <option value="">Seleccione</option>
+            <option value="">Seleccione...</option>
             <option value="1">Fiscalía 1</option>
             <option value="2">Fiscalía 2</option>
             <option value="3">Administración</option>

@@ -9,10 +9,17 @@ function mostrar(seccion){
 
 // VALIDACIÓN
 document.getElementById("formRegistro").addEventListener("submit", function(e){
-    let codigo = document.querySelector("[name='codigo']").value.trim();
 
-    if(!/^DOC[0-9]{3}$/.test(codigo)){
-        alert("Código inválido (DOC001)");
+    let numero = document.querySelector("[name='numero']").value.trim();
+
+    if(numero === "" || isNaN(numero)){
+        alert("Ingrese un número válido");
+        e.preventDefault();
+        return;
+    }
+
+    if(numero < 1 || numero > 999){
+        alert("Número debe estar entre 1 y 999");
         e.preventDefault();
     }
 });
