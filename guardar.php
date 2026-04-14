@@ -1,55 +1,42 @@
 <?php
 include("conexion.php");
 
-// Obtener datos
-$codigo = $_POST['codigo'];
+// Obtener datos seguro
+$numero = isset($_POST['numero']) ? $_POST['numero'] : "";
 $tipo = $_POST['tipo'];
 $fecha = $_POST['fecha'];
 $remitente = $_POST['remitente'];
 $despacho = $_POST['despacho'];
 
-// ================= VALIDACIONES =================
-
-// 1. Campos obligatorios
-if(empty($codigo) || empty($tipo) || empty($fecha) || empty($remitente) || empty($despacho)){
+// VALIDACIONES
+if($numero === "" || empty($tipo) || empty($fecha) || empty($remitente) || empty($despacho)){
     die("Error: Todos los campos son obligatorios");
 }
 
-// 2. Código formato DOC001
-if(!preg_match("/^DOC[0-9]{3}$/", $codigo)){
-    die("Error: El código debe tener formato DOC001");
+if(!is_numeric($numero)){
+    die("Error: El número debe ser numérico");
 }
 
-// 3. Código único
+// Generar código
+$codigo = "DOC" . str_pad($numero, 3, "0", STR_PAD_LEFT);
+
+// Validar duplicado
 $verificar = mysqli_query($conn, "SELECT id FROM documento WHERE codigo='$codigo'");
 if(mysqli_num_rows($verificar) > 0){
-    die("Error: El código ya existe");
+    echo "<script>
+        alert('Código ya existe');
+        window.location='index.html';
+    </script>";
+    exit();
 }
 
-// 4. Tipo válido
+// Validaciones extra
 $tipos_validos = ["Oficio","Carta","Memorando","Informe"];
 if(!in_array($tipo, $tipos_validos)){
-    die("Error: Tipo de documento inválido");
+    die("Tipo inválido");
 }
 
-// 5. Fecha válida
-if(!strtotime($fecha)){
-    die("Error: Fecha inválida");
-}
-
-// 6. Remitente solo letras
-if(!preg_match("/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/", $remitente)){
-    die("Error: El remitente solo debe contener letras");
-}
-
-// 7. Despacho válido (solo 4)
-$despachos_validos = [1,2,3,4];
-if(!in_array($despacho, $despachos_validos)){
-    die("Error: Despacho inválido");
-}
-
-// ================= INSERT =================
-
+// INSERT
 $sql = "INSERT INTO documento 
 (codigo, tipo, fecha_recepcion, remitente, id_despacho, estado)
 VALUES 
@@ -57,17 +44,14 @@ VALUES
 
 if(mysqli_query($conn, $sql)){
 
-    // Obtener ID insertado
     $id = mysqli_insert_id($conn);
 
-    // Insertar seguimiento
     mysqli_query($conn, "INSERT INTO seguimiento (id_documento, estado)
     VALUES ($id, 'Pendiente de entrega')");
 
-    // Redirigir
     header("Location: index.html");
 
 } else {
-    echo "Error al registrar: " . mysqli_error($conn);
+    echo "ERROR SQL: " . mysqli_error($conn);
 }
 ?>

@@ -130,15 +130,41 @@
     </div>
 
     <!-- Formulario -->
-    <form action="guardar.php" method="POST">
+        <form action="guardar.php" method="POST">
         <h2>Registrar Documento</h2>
 
-        <input type="text" name="codigo" placeholder="Código" required>
-        <input type="text" name="tipo" placeholder="Tipo" required>
-        <input type="date" name="fecha" required>
-        <input type="text" name="remitente" placeholder="Remitente" required>
+        <!-- CÓDIGO -->
+        <label>Código (Ingrese solo el número)</label>
+        <div style="display:flex; gap:5px;">
+            <input type="text" value="DOC" readonly style="width:70px;">
+            <input type="number" name="numero" placeholder="Ej: 1" min="1" max="999" required>
+        </div>
 
-        <select name="despacho">
+        <!-- TIPO -->
+        <label>Tipo de Documento</label>
+        <select name="tipo" required>
+            <option value="">Seleccione...</option>
+            <option value="Oficio">Oficio</option>
+            <option value="Carta">Carta</option>
+            <option value="Memorando">Memorando</option>
+            <option value="Informe">Informe</option>
+        </select>
+
+        <!-- FECHA -->
+        <label>Fecha de Recepción</label>
+        <input type="date" name="fecha" max="<?= date('Y-m-d') ?>" required>
+
+        <!-- REMITENTE -->
+        <label>Remitente (solo letras)</label>
+        <input type="text" name="remitente" placeholder="Ej: Juan Perez"
+            pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+" 
+            title="Solo letras y espacios"
+            required>
+
+        <!-- DESPACHO -->
+        <label>Despacho</label>
+        <select name="despacho" required>
+            <option value="">Seleccione...</option>
             <option value="1">Fiscalía 1</option>
             <option value="2">Fiscalía 2</option>
             <option value="3">Administración</option>
@@ -160,6 +186,7 @@
                 <th>Remitente</th>
                 <th>Despacho</th>
                 <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody id="tabla"></tbody>
@@ -185,14 +212,18 @@
             if(doc.estado === "Cargo devuelto entregado") entregados++;
 
             tabla.innerHTML += `
-                <tr>
-                    <td>${doc.codigo}</td>
-                    <td>${doc.tipo}</td>
-                    <td>${doc.fecha_recepcion}</td>
-                    <td>${doc.remitente}</td>
-                    <td>${doc.despacho}</td>
-                    <td>${doc.estado}</td>
-                </tr>
+            <tr>
+                <td>${doc.codigo}</td>
+                <td>${doc.tipo}</td>
+                <td>${doc.fecha_recepcion}</td>
+                <td>${doc.remitente}</td>
+                <td>${doc.despacho}</td>
+                <td>${doc.estado}</td>
+                <td>
+                    <button onclick="editar(${doc.id})">Editar</button>
+                    <button onclick="eliminar(${doc.id})">Eliminar</button>
+                </td>
+            </tr>
             `;
         });
 
@@ -200,6 +231,25 @@
         document.getElementById("pendientes").innerText = pendientes;
         document.getElementById("entregados").innerText = entregados;
     });
+</script>
+
+<script>
+function editar(id){
+    let codigo = prompt("Nuevo código:");
+    let tipo = prompt("Nuevo tipo:");
+    let fecha = prompt("Nueva fecha (YYYY-MM-DD):");
+    let remitente = prompt("Nuevo remitente:");
+    let despacho = prompt("Despacho (1-4):");
+
+    fetch("editar.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `id=${id}&codigo=${codigo}&tipo=${tipo}&fecha=${fecha}&remitente=${remitente}&despacho=${despacho}`
+    })
+    .then(() => location.reload());
+}
 </script>
 
 </body>

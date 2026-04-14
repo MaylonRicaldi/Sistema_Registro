@@ -2,6 +2,7 @@
 include("conexion.php");
 
 $sql = "SELECT 
+d.id,
 d.codigo,
 d.tipo,
 d.fecha_recepcion,
