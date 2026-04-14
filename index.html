@@ -1,120 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Sistema de Documentos</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            display: flex;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background: #1565C0;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-
-        .sidebar a:hover {
-            background: #0d47a1;
-        }
-
-        /* Contenido */
-        .main {
-            flex: 1;
-            padding: 20px;
-            background: #f4f6f9;
-        }
-
-        .cards {
-            display: flex;
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            flex: 1;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px #ccc;
-            text-align: center;
-        }
-
-        form {
-            background: white;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
-
-        input, select, button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 8px;
-        }
-
-        button {
-            background: #1565C0;
-            color: white;
-            border: none;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            background: white;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-
-        th {
-            background: #1565C0;
-            color: white;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Sistema de Documentos</title>
+<link rel="stylesheet" href="css/estilos.css">
 </head>
+
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>📂 Sistema</h2>
-    <a href="#">Dashboard</a>
-    <a href="#">Registrar Documento</a>
-    <a href="#">Guías</a>
+    <h2> Sistema de Registro y Distribucion de Documentos</h2>
+
+    <a href="#" onclick="mostrar('dashboard')"> Dashboard</a>
+    <a href="#" onclick="mostrar('registro')"> Registrar</a>
+    <a href="#" onclick="mostrar('lista')"> Lista</a>
 </div>
 
-<!-- Contenido -->
+<!-- CONTENIDO -->
 <div class="main">
 
+<!-- DASHBOARD -->
+<div id="dashboard">
     <h1>Dashboard</h1>
 
-    <!-- Cards -->
     <div class="cards">
         <div class="card">
-            <h3>Total Documentos</h3>
+            <h3>Total</h3>
             <p id="totalDocs">0</p>
         </div>
 
@@ -124,21 +36,35 @@
         </div>
 
         <div class="card">
+            <h3>Enviados</h3>
+            <p id="enviados">0</p>
+        </div>
+
+        <div class="card">
             <h3>Entregados</h3>
             <p id="entregados">0</p>
         </div>
+
+        <div class="card">
+            <h3>No Recepcionados</h3>
+            <p id="noRecibidos">0</p>
+        </div>
     </div>
+</div>
 
-    <!-- Formulario -->
-    <form action="guardar.php" method="POST">
-        <h2>Registrar Documento</h2>
+<!-- REGISTRO -->
+<div id="registro" style="display:none;">
+    <h1>Registrar Documento</h1>
 
-        <input type="text" name="codigo" placeholder="Código" required>
+    <form action="/Sistema_Registro/guardar.php" method="POST" id="formRegistro">
+
+        <input type="text" name="codigo" placeholder="DOC001" required>
         <input type="text" name="tipo" placeholder="Tipo" required>
         <input type="date" name="fecha" required>
         <input type="text" name="remitente" placeholder="Remitente" required>
 
-        <select name="despacho">
+        <select name="despacho" required>
+            <option value="">Seleccione</option>
             <option value="1">Fiscalía 1</option>
             <option value="2">Fiscalía 2</option>
             <option value="3">Administración</option>
@@ -147,9 +73,11 @@
 
         <button type="submit">Registrar</button>
     </form>
+</div>
 
-    <!-- Tabla -->
-    <h2>Lista de Documentos</h2>
+<!-- LISTA -->
+<div id="lista" style="display:none;">
+    <h1>Lista de Documentos</h1>
 
     <table>
         <thead>
@@ -164,43 +92,31 @@
         </thead>
         <tbody id="tabla"></tbody>
     </table>
+    </div>
+    <form action="generar_guia.php" method="POST">
+
+    <table>
+    <thead>
+    <tr>
+    <th>✔</th>
+    <th>Código</th>
+    <th>Tipo</th>
+    <th>Fecha</th>
+    <th>Remitente</th>
+    <th>Despacho</th>
+    <th>Estado</th>
+    </tr>
+    </thead>
+
+    <tbody id="tabla"></tbody>
+    </table>
+
+    <button type="submit">🚚 Generar Guía</button>
+
+    </form>
 
 </div>
 
-<script>
-    // Cargar datos desde PHP
-    fetch("listar.php")
-    .then(res => res.json())
-    .then(data => {
-
-        let tabla = document.getElementById("tabla");
-
-        let total = data.length;
-        let pendientes = 0;
-        let entregados = 0;
-
-        data.forEach(doc => {
-
-            if(doc.estado === "Pendiente de entrega") pendientes++;
-            if(doc.estado === "Cargo devuelto entregado") entregados++;
-
-            tabla.innerHTML += `
-                <tr>
-                    <td>${doc.codigo}</td>
-                    <td>${doc.tipo}</td>
-                    <td>${doc.fecha_recepcion}</td>
-                    <td>${doc.remitente}</td>
-                    <td>${doc.despacho}</td>
-                    <td>${doc.estado}</td>
-                </tr>
-            `;
-        });
-
-        document.getElementById("totalDocs").innerText = total;
-        document.getElementById("pendientes").innerText = pendientes;
-        document.getElementById("entregados").innerText = entregados;
-    });
-</script>
-
+<script src="js/app.js"></script>
 </body>
 </html>
